@@ -7,15 +7,15 @@
 
 const SoundManager = (() => {
   const files = {
-    ambient: "assets/audio/Our%20Cycle%20-%20Flute%20_%20Instrumental.mp3",
-    ambientAct3: "assets/audio/Our%20Cycle%20-%20Flute%20_%20Instrumental.mp3",
+    ambient: "assets/audio/ambient-music.wav",
+    ambientAct3: "assets/audio/ambient-music-act3.wav",
     trailerBGM: "assets/audio/trailer-bgm.wav",
     pageFlip: "assets/audio/page-flip.wav",
     sparkle: "assets/audio/sparkle.wav",
     giftOpen: "assets/audio/gift-open.wav",
     puzzleComplete: "assets/audio/puzzle-complete.wav",
     fireworks: "assets/audio/fireworks.wav",
-    wind: "assets/audio/ambient-wind.wav",
+    wind: "assets/audio/ambient-music.wav",
     chime: "assets/audio/chime.wav"
   };
 
@@ -32,8 +32,11 @@ const SoundManager = (() => {
     baseVolumes[key] = opts.volume ?? 1;
     audio.volume = baseVolumes[key] * masterVolume;
     audio.addEventListener("error", () => {
-      // Placeholder file missing — fail silently, site still works.
       console.info(`[SoundManager] "${key}" audio not found at ${src} — using silent fallback.`);
+      try {
+        audio.pause();
+        audio.src = "";
+      } catch (e) {}
     });
     players[key] = audio;
     return audio;
