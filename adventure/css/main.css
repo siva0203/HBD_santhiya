@@ -1,0 +1,396 @@
+/* ============================================================
+   MAIN.CSS — Design tokens + base layout
+   Palette: Dreamy Aurora Storybook
+   ============================================================ */
+
+:root {
+  /* --- Color tokens --- */
+  --c-night:        #0B0E2E;   /* deep night navy — base background */
+  --c-night-2:      #141a45;   /* lighter navy layer */
+  --c-aurora:       #6E56CF;   /* aurora violet */
+  --c-lavender:     #D8CDED;   /* brighter lavender for readable secondary text */
+  --c-gold:         #F0C86E;   /* elegant gold */
+  --c-gold-bright:  #FFDE9C;
+  --c-sky:          #8FD3FE;   /* sky blue */
+  --c-pink:         #F5B8CE;   /* soft pink accent */
+  --c-white:        #FDFBFF;
+  --c-ink:          #F1EDF8;   /* high-contrast soft white text on dark */
+
+  /* --- Glass surfaces --- */
+  --glass-bg: rgba(255, 255, 255, 0.06);
+  --glass-border: rgba(255, 255, 255, 0.16);
+  --glass-blur: 18px;
+
+  /* --- Type --- */
+  --font-display: 'Cormorant Garamond', 'Playfair Display', serif;
+  --font-body: 'Quicksand', sans-serif;
+  --font-ui: 'Poppins', sans-serif;
+
+  /* --- Scale --- */
+  --step-0: clamp(1rem, 0.95rem + 0.3vw, 1.15rem);
+  --step-1: clamp(1.25rem, 1.1rem + 0.6vw, 1.6rem);
+  --step-2: clamp(1.75rem, 1.4rem + 1.2vw, 2.5rem);
+  --step-3: clamp(2.5rem, 1.8rem + 2.5vw, 4rem);
+  --step-4: clamp(3.2rem, 2.2rem + 4vw, 6rem);
+
+  --radius-s: 10px;
+  --radius-m: 20px;
+  --radius-l: 32px;
+
+  --ease-story: cubic-bezier(0.16, 1, 0.3, 1);
+
+  /* Readability shadow behind all text — tune this one value if text ever
+     still feels hard to read against a bright patch of background (e.g.
+     the light morning sky in early chapters). Bigger blur / higher alpha
+     = stronger separation from the background. */
+  --text-shadow: 0 2px 18px rgba(0,0,0,0.75), 0 1px 3px rgba(0,0,0,0.9);
+  --text-shadow-soft: 0 1px 8px rgba(0,0,0,0.6);
+}
+
+* { box-sizing: border-box; }
+html {
+  scroll-behavior: smooth;
+  background: var(--c-night);
+}
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+body {
+  margin: 0;
+  font-family: var(--font-body);
+  background: radial-gradient(ellipse at top, #1a1f52 0%, #0B0E2E 55%, #05061a 100%);
+  color: var(--c-ink);
+  overflow-x: hidden;
+  cursor: none;
+}
+
+body.no-custom-cursor { cursor: auto; }
+body.scroll-locked { overflow: hidden; height: 100vh; }
+
+/* --- Cinematic film grain (subtle, adds premium texture over flat gradients) --- */
+body::after {
+  content: "";
+  position: fixed;
+  inset: -50%;
+  width: 200%;
+  height: 200%;
+  z-index: 620;
+  pointer-events: none;
+  opacity: 0.05;
+  mix-blend-mode: overlay;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  animation: grainShift 1.4s steps(4) infinite;
+}
+@keyframes grainShift {
+  0%   { transform: translate(0, 0); }
+  25%  { transform: translate(-1%, 1%); }
+  50%  { transform: translate(1%, -1%); }
+  75%  { transform: translate(-1%, -1%); }
+  100% { transform: translate(0, 0); }
+}
+@media (prefers-reduced-motion: reduce) {
+  body::after { animation: none; }
+}
+
+h1, h2, h3, .display {
+  font-family: var(--font-display);
+  font-weight: 600;
+  color: var(--c-white);
+  letter-spacing: 0.01em;
+  margin: 0;
+  /* Text sits directly over an animated starfield/aurora background with
+     no fixed backing — a consistent shadow keeps it legible no matter
+     what's moving behind it, instead of relying on the background always
+     being dark enough at that exact spot. */
+  text-shadow: var(--text-shadow);
+}
+
+a { color: var(--c-gold); }
+
+.eyebrow {
+  font-family: var(--font-ui);
+  font-size: 0.75rem;
+  letter-spacing: 0.28em;
+  text-transform: uppercase;
+  color: var(--c-lavender);
+  opacity: 0.95;
+  text-shadow: var(--text-shadow-soft);
+}
+
+/* Body copy and paragraphs need the same treatment as headings — applies
+   broadly since a subtle shadow is harmless even on text that's already
+   inside a dark glass panel, but essential for text sitting directly on
+   the animated background. */
+.scene p, .scene span:not(.eyebrow) {
+  text-shadow: var(--text-shadow-soft);
+}
+
+/* --- Fullscreen scene system (replaces scroll-based sections) --- */
+html, body {
+  height: 100%;
+  overflow: hidden; /* navigation is scene-based, not scroll-based */
+}
+.scene {
+  position: fixed;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  /* When a scene's content is taller than the viewport, plain "center" would
+     push part of the content above/before scrollTop:0 — which is unreachable
+     (browsers can't scroll to a negative position), silently cutting off
+     content with no way to see it. "safe center" falls back to start-alignment
+     in that case instead. Needed on BOTH axes since individual scenes
+     override flex-direction to column, which swaps which property (align-
+     items vs justify-content) actually controls the vertical axis. */
+  align-items: safe center;
+  justify-content: safe center;
+  padding: 5.5rem 1.5rem 9rem;
+  overflow-y: auto;   /* a scene's own content may still internally scroll if tall */
+  overflow-x: hidden;
+}
+.scene.is-active { display: flex; }
+
+.scene-inner {
+  position: relative;
+  z-index: 2;
+  max-width: 980px;
+  width: 100%;
+  margin: 0 auto;
+  text-align: center;
+}
+
+/* Transition variants, applied by SceneManager as a scene becomes active */
+.scene.is-entering-push { animation: scenePush 0.8s var(--ease-story); }
+.scene.is-entering-portal { animation: scenePortal 0.9s var(--ease-story); }
+.scene.is-entering-fly { animation: sceneFly 0.75s var(--ease-story); }
+.scene.is-entering-door { animation: sceneDoor 0.9s var(--ease-story); }
+
+@keyframes scenePush {
+  from { opacity: 0; transform: scale(0.92); }
+  to   { opacity: 1; transform: scale(1); }
+}
+@keyframes scenePortal {
+  from { opacity: 0; clip-path: circle(0% at 50% 50%); }
+  to   { opacity: 1; clip-path: circle(75% at 50% 50%); }
+}
+@keyframes sceneFly {
+  from { opacity: 0; transform: translateX(6%); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+@keyframes sceneDoor {
+  0%   { opacity: 0; clip-path: polygon(50% 0, 50% 0, 50% 100%, 50% 100%); }
+  100% { opacity: 1; clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .scene.is-entering-push, .scene.is-entering-portal, .scene.is-entering-fly, .scene.is-entering-door { animation: none; }
+}
+
+.canvas-layer {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+}
+
+#sky-gradient {
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  transition: background 0.3s linear;
+}
+
+#three-bg {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+}
+
+#particles-js {
+  position: fixed;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+}
+
+#particles-stars {
+  z-index: 1;
+}
+
+/* --- Glass panel (storybook page: soft glass + gold-foil hairline edge) --- */
+.glass-panel {
+  background: var(--glass-bg);
+  border: 1px solid var(--glass-border);
+  backdrop-filter: blur(var(--glass-blur));
+  -webkit-backdrop-filter: blur(var(--glass-blur));
+  border-radius: var(--radius-l);
+  position: relative;
+  box-shadow:
+    0 8px 40px rgba(0,0,0,0.35),
+    inset 0 1px 0 rgba(255,255,255,0.08);
+}
+.glass-panel::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  padding: 1px;
+  background: linear-gradient(135deg, rgba(240,200,110,0.55), rgba(240,200,110,0) 30%, rgba(240,200,110,0) 70%, rgba(240,200,110,0.35));
+  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  pointer-events: none;
+  opacity: 0.7;
+}
+
+/* --- Buttons: primary reads as a wax seal / gold medallion, not a generic pill --- */
+.btn {
+  font-family: var(--font-ui);
+  font-size: 0.9rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  padding: 0.85rem 1.9rem;
+  border-radius: 999px;
+  border: 1px solid rgba(120, 90, 20, 0.4);
+  background: radial-gradient(circle at 30% 25%, var(--c-gold-bright), var(--c-gold) 55%, #c99a3f 100%);
+  color: #2a1c04;
+  cursor: pointer;
+  position: relative;
+  transition: transform 0.35s var(--ease-story), box-shadow 0.35s var(--ease-story);
+  box-shadow:
+    0 6px 20px rgba(240, 200, 110, 0.32),
+    inset 0 1px 1px rgba(255,255,255,0.6),
+    inset 0 -3px 6px rgba(120, 80, 10, 0.35);
+}
+.btn:hover { transform: translateY(-3px) scale(1.03); box-shadow: 0 10px 30px rgba(240, 200, 110, 0.48), inset 0 1px 1px rgba(255,255,255,0.6), inset 0 -3px 6px rgba(120, 80, 10, 0.35); }
+.btn:active { transform: translateY(-1px) scale(0.98); }
+.btn:focus-visible { outline: 3px solid var(--c-sky); outline-offset: 3px; }
+.btn--ghost {
+  background: rgba(255,255,255,0.05);
+  color: var(--c-white);
+  box-shadow: inset 0 0 0 1px rgba(255,255,255,0.14);
+}
+.btn--ghost:hover { background: rgba(255,255,255,0.12); box-shadow: inset 0 0 0 1px rgba(255,255,255,0.25); }
+
+/* --- Skip link (a11y) --- */
+.skip-link {
+  position: absolute;
+  left: -999px;
+  top: 0;
+  background: var(--c-gold);
+  color: #201703;
+  padding: 0.75rem 1.25rem;
+  z-index: 9999;
+  border-radius: 0 0 8px 0;
+}
+.skip-link:focus { left: 0; }
+
+/* --- Focus visibility everywhere --- */
+a:focus-visible, button:focus-visible, [tabindex]:focus-visible {
+  outline: 3px solid var(--c-sky);
+  outline-offset: 3px;
+}
+
+/* --- Custom cursor --- */
+.cursor-dot, .cursor-ring {
+  position: fixed;
+  top: 0; left: 0;
+  pointer-events: none;
+  z-index: 10800;
+  transform: translate(-50%, -50%);
+  border-radius: 50%;
+}
+.cursor-dot {
+  width: 10px; height: 10px;
+  clip-path: polygon(50% 0, 62% 36%, 100% 50%, 62% 64%, 50% 100%, 38% 64%, 0 50%, 38% 36%);
+  background: var(--c-gold-bright);
+  box-shadow: 0 0 12px 4px rgba(240,200,110,0.65);
+}
+.cursor-ring {
+  width: 30px; height: 30px;
+  border: 1px solid rgba(255,222,156,0.72);
+  box-shadow: 0 0 14px rgba(240,200,110,0.12), inset 0 0 10px rgba(240,200,110,0.08);
+  transition: width 0.25s, height 0.25s, border-color 0.25s, box-shadow 0.25s;
+}
+.cursor-ring::after {
+  content: "✦";
+  position: absolute;
+  top: -7px;
+  right: -4px;
+  color: var(--c-gold-bright);
+  font-family: var(--font-display);
+  font-size: 0.72rem;
+  line-height: 1;
+  text-shadow: 0 0 8px rgba(240,200,110,0.8);
+  transition: color 0.25s, transform 0.25s;
+}
+.cursor-ring.is-active {
+  width: 46px;
+  height: 46px;
+  border-color: var(--c-pink);
+  box-shadow: 0 0 18px rgba(245,184,206,0.25), inset 0 0 12px rgba(245,184,206,0.12);
+}
+.cursor-ring.is-active::after { color: var(--c-sky); transform: rotate(45deg) scale(1.2); }
+
+/* --- Sound toggle (persistent) --- */
+.sound-control {
+  position: fixed;
+  bottom: 1.5rem;
+  right: 1.5rem;
+  z-index: 500;
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  padding: 0.6rem 1rem;
+  border-radius: 999px;
+}
+.sound-control button {
+  background: none;
+  border: none;
+  color: var(--c-white);
+  font-size: 1.1rem;
+  cursor: pointer;
+}
+.sound-control input[type="range"] { width: 80px; accent-color: var(--c-gold); }
+
+/* --- Progress rail (chapter dots) --- */
+.chapter-rail {
+  position: fixed;
+  right: 1.4rem;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 400;
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+}
+.chapter-rail button {
+  width: 9px; height: 9px;
+  border-radius: 50%;
+  border: 1px solid var(--c-lavender);
+  background: transparent;
+  cursor: pointer;
+  padding: 0;
+}
+.chapter-rail button.is-active { background: var(--c-gold); box-shadow: 0 0 8px var(--c-gold); }
+
+@media (max-width: 720px) {
+  .chapter-rail { display: none; }
+}
+
+.visually-hidden {
+  position: absolute !important;
+  width: 1px; height: 1px;
+  overflow: hidden;
+  clip: rect(0,0,0,0);
+  white-space: nowrap;
+}

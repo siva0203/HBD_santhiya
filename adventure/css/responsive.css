@@ -1,0 +1,52 @@
+/* ============================================================
+   RESPONSIVE.CSS — tablet / mobile / foldable / landscape
+   ============================================================ */
+
+/* Large monitors: cap content width so it doesn't feel empty */
+@media (min-width: 1600px) {
+  .scene-inner { max-width: 1180px; }
+}
+
+/* Tablet */
+@media (max-width: 900px) {
+  .scene { padding: 4.5rem 1.25rem 8rem; }
+  .book { padding: 2rem 1.5rem; }
+  .puzzle-grid { grid-template-columns: repeat(3, 76px); grid-template-rows: repeat(3, 76px); }
+}
+
+/* Mobile */
+@media (max-width: 560px) {
+  #hero h1 { font-size: var(--step-3); }
+  .storybook-card { padding: 2rem 1.25rem; }
+  .letter-card { padding: 2rem 1.25rem; }
+  .music-card { padding: 1.5rem; }
+  .gift-wrap { width: 170px; height: 170px; }
+  .puzzle-grid { grid-template-columns: repeat(3, 66px); grid-template-rows: repeat(3, 66px); }
+  .sound-control { top: 0.75rem; right: 0.75rem; bottom: auto; padding: 0.45rem 0.7rem; }
+  .sound-control input[type="range"] { width: 56px; }
+}
+
+/* Landscape phones: shrink min-height so content isn't cut off */
+@media (max-height: 480px) and (orientation: landscape) {
+  .scene { min-height: auto; padding: 3rem 1.25rem 6.5rem; }
+}
+
+/* Foldables / narrow tall screens */
+@media (max-width: 380px) {
+  .egg-field { height: 260px; }
+  .timeline-item { width: calc(100% - 2.5rem); }
+}
+
+/* Custom cursor makes no sense on touch devices */
+@media (hover: none) and (pointer: coarse) {
+  body { cursor: auto; }
+  .cursor-dot, .cursor-ring { display: none; }
+}
+
+/* Fine-pointer only: hide native cursor for the custom one */
+@media (hover: hover) and (pointer: fine) {
+  body:not(.no-custom-cursor) a,
+  body:not(.no-custom-cursor) button {
+    cursor: none;
+  }
+}

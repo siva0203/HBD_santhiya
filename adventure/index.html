@@ -1,0 +1,474 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>A Magical Surprise ✨</title>
+<meta name="description" content="A cinematic interactive birthday adventure filled with stories, memories, and surprises.">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Caveat:wght@400;500;600;700&family=Cormorant+Garamond:ital,wght@0,500;0,600;1,500&family=Quicksand:wght@400;500;600;700&family=Poppins:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+<link rel="stylesheet" href="css/main.css">
+<link rel="stylesheet" href="css/animations.css">
+<link rel="stylesheet" href="css/sections.css">
+<link rel="stylesheet" href="css/chapters.css">
+<link rel="stylesheet" href="css/responsive.css">
+</head>
+<body>
+
+<a href="#hero" class="skip-link">Skip to content</a>
+
+<!-- ================= AMBIENT BACKGROUND LAYERS ================= -->
+<div id="sky-gradient" aria-hidden="true"></div>
+<canvas id="three-bg" aria-hidden="true"></canvas>
+<div id="particles-js" class="canvas-layer" aria-hidden="true"></div>
+<canvas id="celebration-canvas" class="canvas-layer" style="z-index:450;" aria-hidden="true"></canvas>
+<div id="cinematic-dim" aria-hidden="true"></div>
+<div id="living-world-butterflies" aria-hidden="true"></div>
+<div id="living-world-fireflies" aria-hidden="true"></div>
+
+<!-- ================= CURTAIN (tap to open — the very first interaction) ================= -->
+<div id="curtain" role="button" tabindex="0" aria-label="Tap to open">
+  <div class="curtain-panel curtain-panel--left"></div>
+  <div class="curtain-panel curtain-panel--right"></div>
+  <div class="curtain-portal" aria-hidden="true"></div>
+  <div class="curtain-star-map curtain-star-map--left" aria-hidden="true">
+    <span>✦</span><span>·</span><span>✧</span><span>·</span><span>✦</span>
+  </div>
+  <div class="curtain-star-map curtain-star-map--right" aria-hidden="true">
+    <span>✧</span><span>·</span><span>✦</span><span>·</span><span>✧</span>
+  </div>
+  <span class="curtain-corner curtain-corner--left" aria-hidden="true">✧</span>
+  <span class="curtain-corner curtain-corner--right" aria-hidden="true">✧</span>
+  <div class="curtain-heading">
+    <p class="curtain-kicker">A BIRTHDAY ADVENTURE</p>
+    <h2>A little story for <span data-name>(name)</span></h2>
+  </div>
+  <div class="curtain-hint">
+    <span class="curtain-icon" aria-hidden="true">✦</span>
+    <span>Tap To Open</span>
+  </div>
+  <p class="curtain-footer">10 DECEMBER <span aria-hidden="true">✦</span> A DAY TO CELEBRATE</p>
+</div>
+
+<!-- ================= OPENING SCREEN (live age since she was born) ================= -->
+<div id="opening-screen" role="status" aria-live="polite">
+  <div class="opening-heartmark" aria-hidden="true"><span>♥</span></div>
+  <p class="opening-eyebrow">A little birthday note</p>
+  <h1 class="opening-heading">The world got brighter the day <span data-name>(name)</span> arrived.</h1>
+  <p class="opening-countdown-intro">And every second since has been worth celebrating.</p>
+  <div class="opening-countdown opening-countdown--age">
+    <div class="opening-unit"><span class="num" id="open-years">00</span><span class="label">Years</span></div>
+    <div class="opening-unit"><span class="num" id="open-months">00</span><span class="label">Months</span></div>
+    <div class="opening-unit"><span class="num" id="open-days">00</span><span class="label">Days</span></div>
+    <div class="opening-unit"><span class="num" id="open-hours">00</span><span class="label">Hours</span></div>
+    <div class="opening-unit"><span class="num" id="open-mins">00</span><span class="label">Mins</span></div>
+    <div class="opening-unit"><span class="num" id="open-secs">00</span><span class="label">Secs</span></div>
+  </div>
+  <p class="opening-sub">Counting every moment since <time datetime="2005-12-10">10 December 2005</time></p>
+  <button id="opening-begin-btn" class="btn">Open your birthday story <span aria-hidden="true">→</span></button>
+</div>
+
+<!-- ================= LOADER ================= -->
+<div id="loader" role="status" aria-live="polite">
+  <svg class="loader-castle" viewBox="0 0 200 140" aria-hidden="true">
+    <rect x="60" y="60" width="80" height="70" fill="#241a4d"/>
+    <rect x="40" y="40" width="24" height="90" fill="#2c2160"/>
+    <rect x="136" y="40" width="24" height="90" fill="#2c2160"/>
+    <polygon points="52,40 52,15 64,32" fill="#F0C86E"/>
+    <polygon points="148,40 148,15 136,32" fill="#F0C86E"/>
+    <rect x="92" y="90" width="16" height="40" fill="#0B0E2E"/>
+    <circle cx="100" cy="20" r="6" fill="#FFDE9C"/>
+  </svg>
+  <div class="loader-bar-track"><div class="loader-bar-fill" id="loader-bar-fill"></div></div>
+  <p class="loader-text" id="loader-text">Preparing a magical surprise...</p>
+</div>
+
+<!-- ================= LETTERBOX (cinematic framing, reused across movie moments) ================= -->
+<div class="letterbox-bar top" id="letterbox-top" aria-hidden="true"></div>
+<div class="letterbox-bar bottom" id="letterbox-bottom" aria-hidden="true"></div>
+
+<!-- ================= MOVIE TRAILER ================= -->
+<div id="trailer" aria-hidden="true">
+  <div>
+    <p id="trailer-line"></p>
+    <p id="trailer-logo" class="display" hidden></p>
+  </div>
+  <p id="trailer-freeze-fairy" aria-hidden="true">🧚</p>
+  <p id="trailer-freeze-line"></p>
+</div>
+
+<!-- ================= PIN LOCK SCREEN — Chapter 1 ================= -->
+<div id="pin-screen" aria-hidden="true">
+  <div class="pin-card glass-panel" id="pin-card">
+    <span class="pin-corner pin-corner--tl" aria-hidden="true"></span>
+    <span class="pin-corner pin-corner--tr" aria-hidden="true"></span>
+    <span class="pin-corner pin-corner--bl" aria-hidden="true"></span>
+    <span class="pin-corner pin-corner--br" aria-hidden="true"></span>
+    <div class="pin-lock-emblem" id="pin-lock-emblem" aria-hidden="true">🔒</div>
+    <p class="eyebrow">Chapter One</p>
+    <h2>The Secret Invitation</h2>
+    <p class="pin-sub">Enter the date only we would remember</p>
+    <div class="pin-dots" id="pin-dots"></div>
+    <p id="pin-message" role="alert"></p>
+    <div class="pin-keypad" role="group" aria-label="PIN keypad">
+      <button class="pin-key" data-digit="1">1</button>
+      <button class="pin-key" data-digit="2">2</button>
+      <button class="pin-key" data-digit="3">3</button>
+      <button class="pin-key" data-digit="4">4</button>
+      <button class="pin-key" data-digit="5">5</button>
+      <button class="pin-key" data-digit="6">6</button>
+      <button class="pin-key" data-digit="7">7</button>
+      <button class="pin-key" data-digit="8">8</button>
+      <button class="pin-key" data-digit="9">9</button>
+      <span class="pin-key pin-key--ghost" aria-hidden="true"></span>
+      <button class="pin-key" data-digit="0">0</button>
+      <button class="pin-key" id="pin-backspace" aria-label="Delete digit">⌫</button>
+    </div>
+  </div>
+</div>
+
+<!-- ================= CHAPTER TITLE CARD ================= -->
+<div id="chapter-card" aria-hidden="true">
+  <p id="chapter-card-number"></p>
+  <h2 id="chapter-card-title"></h2>
+</div>
+
+<!-- ================= SCENE DOT RAIL ================= -->
+<nav id="chapter-rail" class="chapter-rail" aria-label="Jump to scene"></nav>
+
+<!-- ================= FAIRY COMPANION ================= -->
+<div id="fairy-companion" class="glass-panel" role="status" aria-live="polite" aria-atomic="true"></div>
+
+<!-- ================= COMPLETION WHISPER (only shown if every secret was found) ================= -->
+<div id="completion-whisper" hidden aria-live="polite"></div>
+
+<!-- ================= SOUND CONTROL ================= -->
+<div class="sound-control glass-panel">
+  <button id="mute-toggle" aria-label="Mute sound">🔊</button>
+  <label for="volume-slider" class="visually-hidden">Volume</label>
+  <input type="range" id="volume-slider" min="0" max="1" step="0.05" value="0.5">
+</div>
+
+<!-- ================= SCENE NAVIGATION ================= -->
+<p class="scene-nav-hint" aria-hidden="true">Scroll, swipe, or tap to continue</p>
+<div class="scene-nav">
+  <button id="scene-prev" aria-label="Previous scene">← Back</button>
+  <button id="scene-next" aria-label="Next scene">Continue →</button>
+</div>
+
+<main>
+
+  <!-- ============ SCENE 1 — THE FAIRY KINGDOM ============ -->
+  <section id="hero" class="scene">
+    <div class="scene-inner">
+      <p class="eyebrow gsap-in">Chapter Two · The Fairy Kingdom</p>
+      <p class="hero-lead gsap-in">Once upon a time, in a world of endless scrolling...</p>
+      <h1 class="gsap-in" data-name>(name)</h1>
+      <span class="hero-flourish gsap-in" aria-hidden="true">✦ ✦ ✦</span>
+      <p class="hero-sub gsap-in">Happy Birthday to my favorite chaos partner</p>
+      <p class="hero-sub gsap-in" id="hero-nicknames" style="font-size:1rem; opacity:0.8;"></p>
+      <p class="scroll-cue gsap-in">USE "CONTINUE" BELOW TO BEGIN ↓</p>
+    </div>
+  </section>
+
+  <!-- ============ SCENE 2 — THE STORY BOOK ============ -->
+  <section id="storybook" class="scene">
+    <div class="scene-inner">
+      <p class="eyebrow">Chapter Three</p>
+      <h2>3 Years Of Almost. 10 Months Of Everything.</h2>
+      <div class="book glass-panel" style="margin-top:2rem;">
+        <div id="story-flash" aria-hidden="true"></div>
+        <div class="book-page" id="book-page-text" aria-live="polite"></div>
+        <div class="book-controls">
+          <button id="book-prev" class="btn btn--ghost" aria-label="Previous page">← Prev</button>
+          <span class="page-indicator" id="page-indicator"></span>
+          <button id="book-next" class="btn btn--ghost" aria-label="Next page">Next →</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ SCENE 3 — THE BOOK OF MEMORIES ============ -->
+  <section id="memorybook" class="scene">
+    <div class="scene-inner">
+      <p class="eyebrow">Chapter Four</p>
+      <h2>The Book Of Memories</h2>
+      <p style="color:var(--c-lavender); max-width:480px; margin:0.5rem auto 0;">
+      </p>
+      <div class="memorybook glass-panel">
+        <div class="memorybook-page" id="memorybook-page">
+          <img id="memorybook-img" alt="" loading="lazy">
+          <p class="memorybook-caption" id="memorybook-caption"></p>
+          <p class="memorybook-quote" id="memorybook-quote"></p>
+        </div>
+        <div class="memorybook-controls">
+          <button id="memorybook-prev" class="btn btn--ghost" aria-label="Previous page">← Prev</button>
+          <span class="page-indicator" id="memorybook-indicator"></span>
+          <button id="memorybook-next" class="btn btn--ghost" aria-label="Next page">Next →</button>
+        </div>
+      </div>
+      <div class="memorybook-downloads">
+        <button id="memorybook-download-png" class="btn btn--ghost">🖼️ Download This Page</button>
+        <button id="memorybook-download-pdf" class="btn btn--ghost">📕 Download Full Book (PDF)</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ SCENE 3.5 — THE LIBRARY OF FUTURE ============ -->
+  <section id="libraryoffuture" class="scene">
+    <div class="scene-inner">
+      <p class="eyebrow">Chapter Five</p>
+      <h2>The Library Of Future</h2>
+      <p style="color:var(--c-lavender); max-width:480px; margin:0.5rem auto 0;">
+        A shelf of chapters still waiting for us.
+      </p>
+      <div class="future-shelf" id="future-shelf"></div>
+      <div class="future-book-panel glass-panel" id="future-book-panel" hidden>
+        <div class="future-open-book">
+          <section class="future-page future-page--story">
+            <p class="future-book-year" id="future-book-year"></p>
+            <h3 class="future-book-title" id="future-book-title"></h3>
+            <p class="future-book-text" id="future-book-text"></p>
+          </section>
+          <section class="future-page future-page--wish">
+            <label for="future-book-note">Leave a wish for this year</label>
+            <textarea id="future-book-note" rows="4" maxlength="500" placeholder="A little note for the future..."></textarea>
+            <p class="future-book-saved" id="future-book-saved" aria-live="polite"></p>
+            <div class="future-book-actions">
+              <button class="btn btn--ghost" id="future-book-save" type="button">Save wish</button>
+              <button class="btn btn--ghost" id="future-book-close" type="button">Close book</button>
+            </div>
+          </section>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ SCENE 4 — TIMELINE ============ -->
+  <section id="timeline" class="scene">
+    <div class="scene-inner">
+      <p class="eyebrow">Chapter Six</p>
+      <h2>Our Timeline</h2>
+      <div class="timeline-track" id="timeline-track"></div>
+    </div>
+  </section>
+
+  <!-- ============ SCENE 5 — CHAT MEMORIES ============ -->
+  <section id="chat" class="scene">
+    <div class="scene-inner">
+      <p class="eyebrow">Chapter Seven</p>
+      <h2>A Few Iconic Messages</h2>
+      <div class="phone-mockup glass-panel">
+        <div class="chat-thread" id="chat-thread"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ SCENE 6 — UNLOCK THE SECRET PUZZLE ============ -->
+  <section id="puzzle" class="scene">
+    <div class="scene-inner">
+      <p class="eyebrow">Chapter Eight</p>
+      <h2>Unlock The Secret Puzzle</h2>
+      <p style="color:var(--c-lavender);">Solve the puzzle to reveal what's next.</p>
+      <div class="puzzle-grid" id="puzzle-grid" role="group" aria-label="Sliding puzzle"></div>
+      <p id="puzzle-status" aria-live="polite"></p>
+
+      <p class="eyebrow" style="margin-top:3rem;">Hidden Magic</p>
+      <div class="egg-field" id="egg-field"></div>
+      <p id="egg-toast" aria-live="polite"></p>
+      <p class="egg-counter" id="egg-counter"></p>
+    </div>
+  </section>
+
+  <!-- ============ SCENE 7 — THE BIRTHDAY GIFT ============ -->
+  <section id="gift" class="scene">
+    <div class="scene-inner">
+      <p class="eyebrow">Chapter Nine</p>
+      <h2>The Birthday Gift</h2>
+      <div class="gift-wrap" id="gift-box" role="button" tabindex="0" aria-label="Open the gift box">
+        <div class="gift-glow" aria-hidden="true"></div>
+        <div class="gift-box-body" aria-hidden="true"></div>
+        <div class="gift-lid" aria-hidden="true"></div>
+        <div class="gift-ribbon-v" aria-hidden="true"></div>
+        <div class="gift-ribbon-h" aria-hidden="true"></div>
+      </div>
+      <p id="gift-hint">Tap the box... if you dare.</p>
+    </div>
+  </section>
+
+  <!-- ============ SCENE 8 — A GREETING CARD ============ -->
+  <section id="greeting" class="scene">
+    <div class="scene-inner">
+      <p class="eyebrow">Chapter Ten</p>
+      <h2>A Greeting Card</h2>
+      <div class="greeting-card glass-panel" id="greeting-card">
+        <div class="greeting-ribbon" aria-hidden="true"></div>
+        <button class="greeting-seal" id="greeting-seal" aria-label="Break the wax seal to open the card">💌</button>
+        <p class="greeting-hint">Break the seal to open your card</p>
+        <p class="greeting-letter-body" id="letter-body"></p>
+        <div id="greeting-hidden-sentence-wrap" hidden>
+          <p class="scratch-revealed-hint">✨ one line is hidden beneath shimmering ink ✨</p>
+          <div class="scratch-container" id="greeting-hidden-sentence"><p style="margin:0;"></p></div>
+        </div>
+        <div id="greeting-wish-wrap" hidden>
+          <p class="scratch-revealed-hint">✨ Scratch Here ✨</p>
+          <div class="scratch-container" id="greeting-wish"><p style="margin:0;"></p></div>
+        </div>
+      </div>
+      <div class="pdf-actions">
+        <button id="download-letter-btn" class="btn">📄 Download Friendship Letter</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ SCENE 9 — MAKE A BIRTHDAY WISH ============ -->
+  <section id="cake" class="scene">
+    <div class="scene-inner">
+      <p class="eyebrow">Chapter Eleven</p>
+      <h2>Make A Birthday Wish</h2>
+      <svg class="cake-scene" viewBox="0 0 200 160" aria-hidden="true">
+        <rect x="30" y="100" width="140" height="45" rx="8" fill="#3a2c73"/>
+        <rect x="30" y="70" width="140" height="35" rx="8" fill="#5240a0"/>
+        <rect x="45" y="45" width="110" height="30" rx="8" fill="#7a5fc9"/>
+        <g class="flame" style="transform-origin:70px 30px;"><ellipse cx="70" cy="28" rx="4" ry="9" fill="#FFDE9C"/></g>
+        <g class="flame" style="transform-origin:100px 25px; animation-delay:0.15s;"><ellipse cx="100" cy="23" rx="4" ry="9" fill="#F0C86E"/></g>
+        <g class="flame" style="transform-origin:130px 30px; animation-delay:0.3s;"><ellipse cx="130" cy="28" rx="4" ry="9" fill="#FFDE9C"/></g>
+        <rect x="68" y="34" width="4" height="14" fill="#fff"/>
+        <rect x="98" y="30" width="4" height="14" fill="#fff"/>
+        <rect x="128" y="34" width="4" height="14" fill="#fff"/>
+      </svg>
+      <button id="mic-enable-btn" class="btn">🎤 Enable Microphone to Blow</button>
+      <div class="mic-level-track"><div class="mic-level-fill" id="mic-level-fill"></div></div>
+      <p class="mic-status" id="mic-status">Tap above and blow gently into your mic.</p>
+      <button id="cake-tap-fallback" class="btn btn--ghost" hidden style="margin-top:1rem;">Tap here to blow out instead</button>
+
+      <div id="wish-countdown" hidden aria-hidden="true">
+        <span class="wish-star">✦</span><span class="wish-star">✦</span><span class="wish-star">✦</span><span class="wish-star">✦</span><span class="wish-star">✦</span>
+      </div>
+      <canvas id="wish-canvas" hidden></canvas>
+    </div>
+  </section>
+
+  <!-- ============ SCENE 10 — THE GRAND CELEBRATION ============ -->
+  <section id="celebration" class="scene">
+    <div class="scene-inner">
+      <p class="eyebrow">Chapter Twelve · 🎉🎉🎉</p>
+      <h2>Happy Birthday, <span data-name>(name)</span>!</h2>
+      <p style="color:var(--c-lavender); font-size:var(--step-1); margin-top:1rem;">
+        Fireworks, confetti, and every good wish — all for you.
+      </p>
+      <div id="moon-glow" aria-hidden="true"></div>
+      <canvas id="moon-canvas" hidden></canvas>
+    </div>
+  </section>
+
+  <!-- ============ SCENE 11 — THE SPOTIFY ROOM ============ -->
+  <section id="music" class="scene">
+    <div class="scene-inner">
+      <p class="eyebrow">Chapter Thirteen</p>
+      <h2>The Spotify Room</h2>
+      <div class="music-card glass-panel">
+        <div class="vinyl" id="vinyl" aria-hidden="true"></div>
+        <div>
+          <p class="now-playing-title" id="now-playing-title"></p>
+          <p class="now-playing-artist" id="now-playing-artist"></p>
+        </div>
+        <div class="music-controls">
+          <button id="music-play-btn" aria-label="Play Eppadi Vandhaayo" title="Play or pause" disabled>▶</button>
+          <div class="visualizer-bars" aria-hidden="true">
+            <span style="height:10px;"></span><span style="height:18px;"></span>
+            <span style="height:8px;"></span><span style="height:22px;"></span>
+            <span style="height:14px;"></span>
+          </div>
+        </div>
+        <div class="music-seek-control">
+          <span id="music-current-time">0:00</span>
+          <label class="visually-hidden" for="music-seek">Seek within Eppadi Vandhaayo</label>
+          <input id="music-seek" type="range" min="0" max="1000" value="0" step="1" disabled>
+          <span id="music-duration">--:--</span>
+        </div>
+        <div class="music-timestamp-control">
+          <label class="visually-hidden" for="music-timestamp">Jump to timestamp, minutes and seconds</label>
+          <input id="music-timestamp" type="text" inputmode="numeric" placeholder="mm:ss, then Enter" aria-label="Jump to timestamp, minutes and seconds" disabled>
+        </div>
+        <div id="spotify-embed" class="spotify-embed" role="region" aria-label="Spotify track player"></div>
+        <p id="spotify-status" class="spotify-status" aria-live="polite">Connecting to Spotify...</p>
+        <a id="spotify-full-track" class="spotify-full-track" target="_blank" rel="noopener">Open full track in Spotify</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ SCENE 12 — CREDITS ============ -->
+  <section id="credits" class="scene">
+    <div class="scene-inner">
+      <p class="eyebrow">Chapter Fourteen</p>
+      <h2>Credits</h2>
+      <div class="credits-window">
+        <div class="credits-reel" id="credits-reel"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ SCENE 13 — SECRET ENDING ============ -->
+  <section id="secretending" class="scene">
+    <div class="scene-inner">
+      <p class="eyebrow">Final Chapter</p>
+      <h2 style="margin-bottom:0.5rem;">Until We Meet Someday</h2>
+      <p id="secret-sequence-line" aria-live="polite"></p>
+      <div id="secret-envelope-wrap" hidden aria-hidden="true">
+        <p id="secret-envelope-icon">💌</p>
+        <p id="secret-envelope-line"></p>
+      </div>
+      <canvas id="ending-canvas"></canvas>
+      <p class="ending-final">Thank you for Ten months that felt like forever.</p>
+      <p class="continue-text">THIS STORY WILL CONTINUE...</p>
+
+      <p id="final-whisper" style="max-width:520px; margin:3rem auto 0; font-family:var(--font-display); font-style:italic; color:var(--c-lavender);"></p>
+      <p class="ending-final" style="margin-top:1.5rem;">✨ Happy Birthday, <span data-name>(name)</span>. ✨</p>
+
+      <button id="postcredit-trigger" class="postcredit-trigger" aria-expanded="false">
+        🎬 wait, there's one more thing...
+      </button>
+      <p id="postcredit-message" class="postcredit-message" hidden></p>
+
+      <div id="secret-feather-wrap" hidden>
+        <p class="scratch-revealed-hint">🪶 a glowing feather drifted down ✨</p>
+        <div class="scratch-container" id="secret-feather"><p style="margin:0;"></p></div>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<!-- ================= LIBRARIES (CDN) ================= -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/particles.js/2.0.0/particles.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+
+<!-- ================= SITE SCRIPTS (order matters) ================= -->
+<script src="config/config.js"></script>
+<script src="js/audio.js"></script>
+<script src="js/discoveries.js"></script>
+<script src="js/background.js"></script>
+<script src="js/trailer.js"></script>
+<script src="js/pin.js"></script>
+<script src="js/loader.js"></script>
+<script src="js/opening.js"></script>
+<script src="js/fairy.js"></script>
+<script src="js/livingworld.js"></script>
+<script src="js/scenemanager.js"></script>
+<script src="js/startext.js"></script>
+<script src="js/scratchreveal.js"></script>
+<script src="js/scenes.js"></script>
+<script src="js/letter.js"></script>
+<script src="js/main.js"></script>
+<script src="js/particles-config.js"></script>
+
+</body>
+</html>
