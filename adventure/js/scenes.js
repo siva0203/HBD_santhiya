@@ -431,7 +431,7 @@ const Cake = (() => {
 
     SceneManager.lock();
     dim.classList.add("is-visible");
-    SoundManager.duckAmbient(700, true); // ambient fades, soft wind stays
+    SoundManager.duckAmbient(700);
 
     await FairyCompanion.sayTemporary("🧚💭", cfg.fairyPrompt, 2200);
     statusEl.textContent = cfg.fairyPrompt;
@@ -708,7 +708,7 @@ const SecretEnding = (() => {
     } else {
       dim.classList.add("is-visible");
     }
-    SoundManager.duckAmbient(900, false); // false = kill the wind bed too, true silence
+    SoundManager.duckAmbient(900);
     await wait(3200); // the hold — long enough to believe it's actually over
   }
 

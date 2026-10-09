@@ -68,8 +68,6 @@ const FriendshipLetter = (() => {
     doc.setFontSize(13.5);
     doc.setTextColor(40, 40, 60);
     const text = fillName(SITE_CONFIG.letterBody)
-      .replace(/❤️/g, "[love]")
-      .replace(/😂/g, "[laughing]")
       .replace(/\*\*/g, "")
       .replace(/[—–]/g, "-")
       .replace(/·/g, "-")

@@ -153,7 +153,10 @@ const MainApp = (() => {
   function boot() {
     document.addEventListener("DOMContentLoaded", () => {
       initStaticModules();
-      OpeningScreen.init(() => Loader.run(() => MovieTrailer.play()));
+      OpeningScreen.init(() => {
+        SoundManager.play("heartbeat");
+        Loader.run(() => MovieTrailer.play());
+      });
     });
   }
 
